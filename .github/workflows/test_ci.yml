@@ -1,23 +1,19 @@
-# git one
-name: CI Pipeline
+name: Release Pipeline
 
 on:
   push:
-    branches:
-      - dev_cal_app
-  pull_request:
-    branches:
-      - dev_cal_app
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python: ["3.9", "3.10", "3.11"]
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -30,7 +26,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
 
-      # You can test your matrix by printing the current Python version
-      - name: Run unit tests
-        run: pytest -vv
+      - name: Extract version from tag
+        id: extract_version
+        run: echo "::set-output name=version::$(echo ${{ github.ref }} | sed -n 's|^refs/tags/v||p')"
 
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ steps.extract_version.outputs.version }}
+          title: Release ${{ steps.extract_version.outputs.version }}
