@@ -28,12 +28,12 @@ jobs:
 
       - name: Extract version from tag
         id: extract_version
-        run: echo "::set-output name=version::$(echo ${{ github.ref }} | sed -n 's|^refs/tags/v||p')"
+        run: echo "VERSION=$(echo ${{ github.ref }} | sed -n 's|^refs/tags/v||p')" >> $GITHUB_ENV
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ steps.extract_version.outputs.version }}
-          title: Release ${{ steps.extract_version.outputs.version }}
+          tag_name: ${{ env.VERSION }}
+          title: Release ${{ env.VERSION }}
