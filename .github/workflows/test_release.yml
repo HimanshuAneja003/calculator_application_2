@@ -1,39 +1,21 @@
-name: Release Pipeline
+name: Main
 
-on:
-  push:
-    tags:
-      - 'v*.*.*'
+on: push
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ["3.9", "3.10", "3.11"]
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest
-
-      - name: Extract version from tag
-        id: extract_version
-        run: echo "VERSION=$(echo ${{ github.ref }} | sed -n 's|^refs/tags/v||p')" >> $GITHUB_ENV
-
-      - name: Create GitHub release
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: echo ${{ github.sha }} > Release.txt
+      - name: Test
+        run: cat Release.txt
+      - name: Release
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: dist/*
-          token: ${{ secrets.GH_TOKEN }}
-          tag_name: ${{ env.VERSION }}
-          name: ${{ env.VERSION }}
+          files: |
+            test_calculator2.py
+            test2.py
