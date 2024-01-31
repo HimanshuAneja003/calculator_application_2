@@ -16,10 +16,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: |
-            test_calculator2.py
-            test2.py
-            dist/*
+          files: dist/*
           token: ${{ secrets.GH_TOKEN }}
           tag_name: ${{ env.VERSION }}
           name: ${{ env.VERSION }}
