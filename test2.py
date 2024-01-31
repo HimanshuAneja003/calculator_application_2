@@ -1,4 +1,4 @@
-#Test.py
+# Test.pytest
 #
 def add(x, y):
     return x + y
@@ -44,4 +44,3 @@ if __name__ == "__main__":
         print("Invalid input. Please enter valid numeric values.")
     except ZeroDivisionError:
         print("Cannot divide by zero. Please enter a non-zero divisor.")
-
